@@ -15,6 +15,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 
+/* 	$Id: cdm.c,v 1.3 2004/01/11 16:49:58 fdc Exp $	 */
+
+#ifndef lint
+static char vcid[] = "$Id: cdm.c,v 1.3 2004/01/11 16:49:58 fdc Exp $";
+#endif /* lint */
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -50,7 +57,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 
 typedef unsigned char	BYTE;
 
-#define VERSION	"1.00"
+#define VERSION	"1.10"
 
 #ifdef CPM3
 /* this is rudimentary and untested - just the obvious differences */
@@ -1134,9 +1141,10 @@ copyuc(char *fn1, char *fn0)
     trunc(&cf);
 }
 
-/* copy CP/M file to unix file */
+/* copy CP/M file to unix file
+	dirp >= 0 : skip srchdir() */
 static void
-copycu(char *fn1, char *fn0)
+copycu(char *fn1, char *fn0, int dirp)
 {
     CFILE cf;
     FILE *uf;
@@ -1149,7 +1157,7 @@ copycu(char *fn1, char *fn0)
 	return;
     }
     cf.dp = mnttab + d;
-    cf.dirp = srchdir(cf.dp, cf.fcb, 15, 0);
+    cf.dirp = (dirp >= 0) ? dirp : srchdir(cf.dp, cf.fcb, 15, 0);
     if (cf.dirp < 0) {
 	fprintf(stderr, "no file: %s\n", fn1);
 	return;
@@ -1230,6 +1238,34 @@ checkname(char *name, int optional)
     return CPM_UFN;
 }
 
+static int
+spname(char *s, BYTE *p)
+{
+    int c;
+    int i;
+    char *start = s;
+
+    for (i = 0; i < 8; i++, p++)
+	if ((c = *p) != ' ') {
+	    c &= 0x7f;
+	    if (isupper(c))
+		c = tolower(c);
+	    *s++ = c;
+	}
+    if (*p != ' ') {
+	*s++ = '.';
+	for (i = 0; i < 3; i++, p++)
+	    if ((c = *p) != ' ') {
+		c &= 0x7f;
+		if (isupper(c))
+		    c = tolower(c);
+		*s++ = c;
+	    }
+    }
+    *s = '\0';
+    return s - start;			/* strlen */
+}
+
 /* TODO: be more permissive about ambiguous names */
 static int
 docp(char *tok)
@@ -1260,14 +1296,7 @@ docp(char *tok)
 	}
     }
     t2 = checkname(fn2, 1);
-    if (t2 == UX_DIR) {
-	char *p1 = xmalloc(strlen(fn2)+strlen(fn1n)+2);
-	sprintf(p1, "%s/%s", fn2, fn1n);
-	if (p) free(p);
-	fn2 = p = p1;
-	t2 = checkname(fn2, 1);
-    }
-    if (t1 == CPM_AFN || t2 == CPM_AFN || t1 == UX_DIR || t2 == UX_DIR) {
+    if (t2 == CPM_AFN || t1 == UX_DIR) {
 	fprintf(stderr, "ambiguous: %s\n", fn1);
 	if (p) free(p);
 	return 0;
@@ -1277,6 +1306,9 @@ docp(char *tok)
 	break;
     case CPM_UFN:
 	switch (t1) {
+	case CPM_AFN:
+	    fprintf(stderr, "ambiguous: %s\n", fn1);
+	    break;
 	case CPM_UFN:
 	    copycc(fn1, fn2);
 	    break;
@@ -1285,10 +1317,93 @@ docp(char *tok)
 	    break;
 	}
 	break;
+    case UX_DIR:
+	switch (t1) {
+	case CPM_AFN:
+	{
+	    int disk, dn = 0, nmatches;
+	    char *afn;
+	    BYTE fcb[16];
+	    BYTE *entry;
+	    struct mnt *dp;
+	    char wild[8];
+	    int k = 0;
+	    int len1;
+	    char mfn1[18];			/* matching [duu:]filename */
+	    char *mfn1n;			/* matching filename */
+	    char *mfn2;				/* UNIX dst dir + mfn1n */
+	    char *p1;
+
+	    strcpy(mfn1, fn1);
+	    mfn1n = mfn1 + (fn1n - fn1);
+	    afn = fn1;
+	    k = strlen(afn);
+	    if (k && k < 5 && afn[k-1] == ':') {
+		sprintf(wild, "%s*.*", afn);
+		disk = makefcb(wild, fcb);
+	    }
+	    else
+		disk = makefcb(afn, fcb);
+	    if (disk < 0)
+		return 0;
+	    dp = mnttab + disk;
+	    nmatches = 0;
+	    while ((dn = srchdir(dp, fcb, 15, dn)) >= 0) {
+		entry = dp->dir + 32*dn;
+		if (*entry <= MAXUSER) {
+
+		    /* convert fcb name/type to lc string */
+
+		    len1 = spname(mfn1n, entry+1);
+
+		    /* append filename string to UNIX dirname */
+
+		    p1 = xmalloc(strlen(fn2)+len1+2);
+		    sprintf(p1, "%s/%s", fn2, mfn1n);
+		    if (p) free(p);
+		    mfn2 = p = p1;
+
+		    /* make sure dst is not a UNIX directory */
+
+		    if (checkname(mfn2, 1) == UX_DIR)
+			fprintf(stderr, "dest is dir, exists: %s\n", mfn2);
+		    else
+			copycu(mfn1, mfn2, dn);
+		    nmatches++;
+		}
+		dn++;
+	    }
+	    if (nmatches == 0)
+		fprintf(stderr, "no matches: %s\n", fn1);
+	    break;
+	}
+	case CPM_UFN:
+	{
+	    char *p1 = xmalloc(strlen(fn2)+strlen(fn1n)+2);
+
+	    sprintf(p1, "%s/%s", fn2, fn1n);
+	    if (p) free(p);
+	    fn2 = p = p1;
+	    if (checkname(fn2, 1) == UX_DIR) {
+		fprintf(stderr, "dest is dir, exists: %s\n", fn2);
+		if (p) free(p);
+		return 0;
+	    }
+	    copycu(fn1, fn2, -1);
+	    break;
+	}
+	case UX_RFN:
+	    fputs("use !cp\n", stderr);
+	    break;
+	}
+	break;
     case UX_RFN:
 	switch (t1) {
+	case CPM_AFN:
+	    fprintf(stderr, "ambiguous: %s\n", fn1);
+	    break;
 	case CPM_UFN:
-	    copycu(fn1, fn2);
+	    copycu(fn1, fn2, -1);
 	    break;
 	case UX_RFN:
 	    fputs("use !cp\n", stderr);
@@ -1484,7 +1599,9 @@ COMMAND commands[] = {
       "cp u:<path> <ufn>    copy unix <path> to CP/M binary file <ufn>\n"
       "cp t:<path> <ufn>    copy unix <path> to CP/M text file <ufn>\n"
       "cp <ufn> u:<path>    copy binary CP/M file <ufn> to unix <path>\n"
-      "cp <ufn> t:<path>    copy text CP/M file <ufn> to unix <path>" },
+      "cp <ufn> t:<path>    copy text CP/M file <ufn> to unix <path>\n"
+      "cp <afn> u:<dir>     copy binary CP/M file(s) <afn> to unix <dir>\n"
+      "cp <afn> t:<dir>     copy text CP/M file(s) <afn> to unix <dir>" },
 { "rename", dorename, "Rename a CP/M file",
       "rename <newname>=<oldname>\n"
       "rename <oldname> <newname>" },
@@ -1552,13 +1669,14 @@ docmd(char *cmd)
 	*tok = 0;
 	if (!diskuser(cmd, &d, &u))
 	    goto bad;
-	if (d >= 0)
+	if (d >= 0) {
 	    if (mnttab[d].flags & MNT_ACTIVE)
 		curdisk = d;
 	    else {
 		fprintf(stderr, "disk %c not mounted\n", 'A'+d);
 		return 0;
 	    }
+	}
 	if (u >= 0)
 	    curuser = u;
 	return 0;
@@ -1572,11 +1690,12 @@ docmd(char *cmd)
     if (tok == NULL || *tok == 0)
 	return 0;
     for (tlen = strlen(tok), cp = commands; cp->name; cp++)
-	if (strncmp(tok, cp->name, tlen) == 0)
+	if (strncmp(tok, cp->name, tlen) == 0) {
 	    if (func)
 		goto bad;		/* ambiguous */
 	    else
 		func = cp->func;
+	}
     if (func)
 	return func(tok);
  bad:
@@ -1603,6 +1722,7 @@ main(int argc, char **argv)
 
     puts("\nCP/M Disk Manager " VERSION
 	 ", Copyright 1995 Frank D. Cringle.\n"
+	 "Portions copyright (C) 2004 Carl Mascott.\n"
 	 "cdm comes with ABSOLUTELY NO WARRANTY; for details\n"
 	 "see the file \"COPYING\" in the distribution directory.\n");
 

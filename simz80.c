@@ -1917,7 +1917,7 @@ simz80(FASTREG PC)
 				parity(temp);
 			break;
 		case 0x41:			/* OUT (C),B */
-			Output(lreg(BC), BC);
+			Output(lreg(BC), hreg(BC));
 			break;
 		case 0x42:			/* SBC HL,BC */
 			HL &= 0xffff;
@@ -1960,7 +1960,7 @@ simz80(FASTREG PC)
 				parity(temp);
 			break;
 		case 0x49:			/* OUT (C),C */
-			Output(lreg(BC), BC);
+			Output(lreg(BC), lreg(BC));
 			break;
 		case 0x4A:			/* ADC HL,BC */
 			HL &= 0xffff;
@@ -1993,7 +1993,7 @@ simz80(FASTREG PC)
 				parity(temp);
 			break;
 		case 0x51:			/* OUT (C),D */
-			Output(lreg(BC), DE);
+			Output(lreg(BC), hreg(DE));
 			break;
 		case 0x52:			/* SBC HL,DE */
 			HL &= 0xffff;
@@ -2025,7 +2025,7 @@ simz80(FASTREG PC)
 				parity(temp);
 			break;
 		case 0x59:			/* OUT (C),E */
-			Output(lreg(BC), DE);
+			Output(lreg(BC), lreg(DE));
 			break;
 		case 0x5A:			/* ADC HL,DE */
 			HL &= 0xffff;
@@ -2057,7 +2057,7 @@ simz80(FASTREG PC)
 				parity(temp);
 			break;
 		case 0x61:			/* OUT (C),H */
-			Output(lreg(BC), HL);
+			Output(lreg(BC), hreg(HL));
 			break;
 		case 0x62:			/* SBC HL,HL */
 			HL &= 0xffff;
@@ -2090,7 +2090,7 @@ simz80(FASTREG PC)
 				parity(temp);
 			break;
 		case 0x69:			/* OUT (C),L */
-			Output(lreg(BC), HL);
+			Output(lreg(BC), lreg(HL));
 			break;
 		case 0x6A:			/* ADC HL,HL */
 			HL &= 0xffff;
@@ -2123,7 +2123,7 @@ simz80(FASTREG PC)
 				parity(temp);
 			break;
 		case 0x71:			/* OUT (C),0 */
-			Output(lreg(BC), 0);
+			Output(lreg(BC), lreg(0));
 			break;
 		case 0x72:			/* SBC HL,SP */
 			HL &= 0xffff;
@@ -2149,7 +2149,7 @@ simz80(FASTREG PC)
 				parity(temp);
 			break;
 		case 0x79:			/* OUT (C),A */
-			Output(lreg(BC), AF);
+			Output(lreg(BC), hreg(AF));
 			break;
 		case 0x7A:			/* ADC HL,SP */
 			HL &= 0xffff;

@@ -1,5 +1,9 @@
 # Makefile for yaze
 
+#	$Id: Makefile,v 1.3 2004/01/13 17:00:02 fdc Exp $	
+
+VERSION		= 1.12
+
 # CC must be an ANSI-C compiler
 CC            =	gcc
 
@@ -19,8 +23,8 @@ OPTIMIZE      = -O2
 # -DMMU compiles in support for bank-switched memory
 # -DMEMSIZE <val> sets size of memory in KBytes (default 64)
 # solaris2 needs -D__EXTENSIONS__
-# linux needs -D_POSIX_SOURCE
-OPTIONS	      = -DBIOS
+# linux needs -D_BSD_SOURCE
+OPTIONS	      = -DBIOS -D_BSD_SOURCE
 
 # Link with CP/M BIOS support,
 YAZE_OBJS     = yaze.o simz80.o bios.o monitor.o
@@ -42,13 +46,14 @@ CFLAGS        =	$(CWARN) $(OPTIMIZE) $(OPTIONS) -DLIBDIR=\"$(LIBDIR)/\"
 
 SRCS	      = yaze.c simz80.c io.c bios.c monitor.c cdm.c
 DOC	      = README README-1.10 COPYING yaze.doc yaze.1 cdm.1 ChangeLog
-TEST	      =	test/prelim.z80 test/zexlax.pl test/zexall.z80 test/zexdoc.z80 \
-		test/prelim.com test/zexall.com test/zexdoc.com \
-		test/savage.pas test/savage.com test/sys.azm test/sys.com \
-		test/timex.com
+TEST_SRC      =	test/prelim.z80 test/zexall.z80 \
+		test/zexdoc.z80 test/savage.pas test/sys.azm
+TEST_BIN      = test/prelim.com test/zexall.com test/zexdoc.com \
+		test/savage.com test/sys.com test/timex.com
 
-DISTRIB       =	Makefile simz80.h yaze.h bios.h \
-		simz80.pl .yazerc yaze.boot $(SRCS) $(DOC) $(TEST)
+DISTRIB       =	Makefile simz80.h yaze.h bios.h simz80.pl .yazerc yaze.boot \
+		host2cpm.tcl test/zexlax.pl \
+		$(SRCS) $(DOC) $(TEST_SRC) $(TEST_BIN)
 
 all:		yaze cdm
 
@@ -71,13 +76,27 @@ install:	all
 		$(INSTALL) -c -m 644 cdm.1 $(MANDIR)
 
 tar:		$(DISTRIB)
-		(P=`pwd`; D=`basename $$P`; cd ..; \
-			for f in $(DISTRIB); do echo $$D/$$f; done \
-			| tar -T - -czf $$D/$$D.tar.gz)
+		(rm -rf yaze-$(VERSION); \
+		mkdir yaze-$(VERSION); \
+		cd yaze-$(VERSION); \
+		for f in Makefile simz80.h yaze.h bios.h simz80.pl \
+			    .yazerc yaze.boot host2cpm.tcl $(SRCS) $(DOC); \
+			do ln ../$$f .; done; \
+		mkdir test; \
+		for f in $(TEST_SRC); \
+			do if test -z `tr -dc '\r' <../$$f`; \
+				then sed 's/$$//' <../$$f >$$f; \
+				else ln ../$$f $$f; fi; \
+		done; \
+		for f in test/zexlax.pl $(TEST_BIN); \
+			do ln ../$$f $$f; done; \
+		cd ..; \
+		tar cf yaze-$(VERSION).tar yaze-$(VERSION); \
+		gzip -9 yaze-$(VERSION).tar; \
+		rm -rf yaze-$(VERSION))
 
 clean:;		rm -f *.o *~ core
 
 yaze.o:		yaze.c simz80.h yaze.h
 bios.o:		bios.c simz80.h yaze.h
 simz80.o:	simz80.c simz80.h
-

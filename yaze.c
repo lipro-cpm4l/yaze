@@ -22,7 +22,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 #include "simz80.h"
 #include "yaze.h"
 
-#define VERSION	"1.10"
+/* 	$Id: yaze.c,v 1.2 2004/01/11 16:11:17 fdc Exp $	 */
+
+#ifndef lint
+static char vcid[] = "$Id: yaze.c,v 1.2 2004/01/11 16:11:17 fdc Exp $";
+#endif /* lint */
+
+
+#define VERSION	"1.11"
 
 /* Z80 registers */
 WORD af[2];			/* accumulator and flags (2 banks) */
@@ -40,7 +47,7 @@ WORD IFF;
 
 BYTE ram[MEMSIZE*1024];		/* Z80 memory space */
 #ifdef MMU
-BYTE *pagetable[MEMSIZE/4];	/* MMU page table */
+BYTE *pagetable[16];		/* MMU page table */
 #endif
 
 #ifndef LIBDIR
@@ -260,7 +267,7 @@ main(int argc, char **argv)
 	}
 
 #ifdef MMU
-    for (c=0; c<MEMSIZE/4; ++c) pagetable[c]=ram+(c<<12);
+    for (c=0; c<16; ++c) pagetable[c]=ram+(c<<12);
 #endif
 #ifdef BIOS
     ccp_base = basepage * 256;
@@ -317,6 +324,10 @@ main(int argc, char **argv)
     fprintf(stderr,"HALT\n\r");
     fprintf(stderr,"PC   SP   IR   IX   IY   AF   BC   DE   HL   AF'  BC'  DE'  HL'\n\r");
     fprintf(stderr,"%04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x\n\r",pc,sp,ir,ix,iy,af[af_sel],regs[regs_sel].bc,regs[regs_sel].de,regs[regs_sel].hl,af[1-af_sel],regs[1-regs_sel].bc,regs[1-regs_sel].de,regs[1-regs_sel].hl);
+    for (c=0; c<16; ++c) fprintf(stderr,"F%-4x",c);
+    fprintf(stderr,"\r\n");
+    for (c=0; c<16; ++c) fprintf(stderr,"%s%04x",c?" ":"",(pagetable[c]-ram)>>12);
+    fprintf(stderr,"\r\n");
     exit(0);
 #else
     do bios(ram[simz80(pc)]); while (1);

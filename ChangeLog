@@ -1,3 +1,12 @@
+**** Version 1.13 released ****
+
+2004-01-24  Frank D. Cringle  <fdc@cliwe.ping.de>
+
+	* yaze.c, Makefile (VERSION): update version string.
+
+	* simz80.h: pagetable definition did not match the definition in
+	yaze.c (Michael Haardt).
+
 **** Version 1.12 released ****
 
 2004-01-12  Frank D. Cringle  <fdc@cliwe.ping.de>

@@ -35,10 +35,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 #include "yaze.h"
 #include "bios.h"
 
-/* 	$Id: bios.c,v 1.3 2004/01/11 16:49:58 fdc Exp $	 */
+/* 	$Id: bios.c,v 1.4 2004/04/23 09:50:15 fdc Exp $	 */
 
 #ifndef lint
-static char vcid[] = "$Id: bios.c,v 1.3 2004/01/11 16:49:58 fdc Exp $";
+static char vcid[] = "$Id: bios.c,v 1.4 2004/04/23 09:50:15 fdc Exp $";
 #endif /* lint */
 
 
@@ -532,8 +532,9 @@ bios(int func)
 	break;
     case 253:			/* return from recursive call */
 	return;
-    case 254:			/* meta-level command */
-	if (GetBYTE(++pc) == 0)
+    case 254:
+	++pc;			/* meta-level command */
+	if (GetBYTE(pc) == 0)
 	    monitor(0);
 	else {
 	    /* need a copy because docmd() scratches its argument */

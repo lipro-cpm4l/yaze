@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 
 EOT
 
-# 	$Id: simz80.pl,v 1.2 2004/01/11 16:11:17 fdc Exp $
+# 	$Id: simz80.pl,v 1.3 2004/04/23 09:50:15 fdc Exp $
 
 
 # This perl script generates the z80 instruction set simulator simz80().
@@ -1084,7 +1084,7 @@ sub ed_switch {
 				2 | (temp != 0);
 EOT
     &case(0x45, "RETN");		print "\t\t\tIFF |= IFF >> 1;\n\t\t\tPOP(PC);\n";
-    &case(0x46, "IM 0");		print "\t\t\t/* interrupt mode 0 */\n";
+    &case(0x46, "IM 0");		print "\t\t\tIM = 0;\n";
     &case(0x47, "LD I,A");		print "\t\t\tir = (ir & 255) | (AF & ~255);\n";
     &case(0x48, "IN C,(C)");		&INP(BC, "l");
     &case(0x49, "OUT (C),C");		&OUTP(BC, "l");
@@ -1096,7 +1096,7 @@ EOT
     &case(0x51, "OUT (C),D");		&OUTP(DE, "h");
     &case(0x52, "SBC HL,DE");		&SBCdd(HL, DE);
     &case(0x53, "LD (nnnn),DE");	&LDmemdd(DE);
-    &case(0x56, "IM 1");		print "\t\t\t/* interrupt mode 1 */\n";
+    &case(0x56, "IM 1");		print "\t\t\tIM = 1;\n";
     &case(0x57, "LD A,I");		print "\t\t\tAF = (AF & 0x29) | (ir & ~255) | ",
 					      "((ir >> 8) & 0x80) | (((ir & ~255) == 0) << 6)",
 					      " | ((IFF & 2) << 1);\n";
@@ -1104,7 +1104,7 @@ EOT
     &case(0x59, "OUT (C),E");		&OUTP(DE, "l");
     &case(0x5A, "ADC HL,DE");		&ADCdd(HL, DE);
     &case(0x5B, "LD DE,(nnnn)");	&LDddmem(DE);
-    &case(0x5E, "IM 2");		print "\t\t\t/* interrupt mode 2 */\n";
+    &case(0x5E, "IM 2");		print "\t\t\tIM = 2;\n";
     &case(0x5F, "LD A,R");		print "\t\t\tAF = (AF & 0x29) | ((ir & 255) << 8) | ",
 					      "(ir & 0x80) | (((ir & 255) == 0) << 6)",
 					      " | ((IFF & 2) << 1);\n";

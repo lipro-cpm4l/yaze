@@ -1,15 +1,15 @@
 /* Notes */ /*{{{C}}}*//*{{{*/
 /*
 
-(c) 1996,1997 by Michael Haardt (michael@cantor.informatik.rwth-aachen.de)
+(c) 1996-1999 by Michael Haardt (michael@moria.de)
 yaze comes with ABSOLUTELY NO WARRANTY; for details see the file "COPYING"
 in the distribution directory.
 
 This module implements idealised hardware similar to Udo Munk's Z80-PC
 simulator, thus turning yaze into a Z80-PC simulator instead of a Z80
-simulator with integrated BIOS emulation.  The provided BIOS can be used
-to run P2DOS+Z80CCP, but you can run other operating systems as well by
-using your own drivers.
+simulator with integrated BIOS emulation.  You can get kits for a CP/M
+2.2 compatible OS from http://www.moria.de/yaze-p2dos/ and for CP/M 3.0
+from http://www.moria.de/~michael/yaze-cpm3/.
 
 The simulated disk drives' geometry must match the DPB in the BIOS.  A:
 and B: are 77 track/26 sector 256KB drives, whereas C: and D: are 1024
@@ -28,10 +28,17 @@ line connected to a TCP port:
 attach rdr 3000
 attach pun 3000
 
-When a TCP connection is closed, a control-z will be sent to the
-simulator.
+When a TCP connection is closed, control-z will be sent to the
+simulator, if it still reads characters.
 
 */
+
+/* 	$Id: io.c,v 1.2 2004/01/11 16:11:17 fdc Exp $	 */
+
+#ifndef lint
+static char vcid[] = "$Id: io.c,v 1.2 2004/01/11 16:11:17 fdc Exp $";
+#endif /* lint */
+
 /*}}}*/
 /* #includes */ /*{{{*/
 #include <arpa/telnet.h>
@@ -67,6 +74,9 @@ simulator.
 #define FDCX  15
 #define DMAL  16
 #define DMAH  17
+#define PAGEL 20
+#define PAGEH 21
+#define FRAME 22
 #define CLKC  25
 #define CLKD  26
 #define HALT  255
@@ -183,6 +193,7 @@ struct dskdef *disks[DISKS] = {
 };
 /*}}}*/
 
+static unsigned int page;
 static unsigned int drive;
 static unsigned int track;
 static unsigned int sector;
@@ -194,7 +205,7 @@ static const char rawmode[]={(char)IAC,(char)WILL,(char)TELOPT_SGA,(char)IAC,(ch
 /*}}}*/
 
 /* telnetinit */ /*{{{*/
-int telnetinit(int fd2)
+static int telnetinit(int fd2)
 {
   int binary_ok,mode;
   char c;
@@ -302,12 +313,12 @@ static int devready(struct Device *r)
     if (select(r->fd2+1,&s,(fd_set*)0,(fd_set*)0,&t)==1)
     {
       benice=0;
-      return 0xff;
+      return 0x3;
     }
     else
     {
       if (benice<BENICE) ++benice;
-      return 0;
+      return 0x2;
     }
   }
   /*}}}*/
@@ -617,7 +628,7 @@ void out(unsigned int port, unsigned char byte)
     case PRTD: devwrite(lst,byte); break;
     /*}}}*/
     /* FDCD */ /*{{{*/
-    case FDCD: if (byte>15 || disks[byte]->fd==-1) status=FDCX_NODRIVE; else { drive=byte; status=FDCX_OK; } break;
+    case FDCD: if (byte>15 || disks[byte]==(struct dskdef*)0 || disks[byte]->fd==-1) status=FDCX_NODRIVE; else { drive=byte; status=FDCX_OK; } break;
     /*}}}*/
     /* FDCTL */ /*{{{*/
     case FDCTL: track=(track&0xff00)|byte; break;
@@ -659,11 +670,11 @@ void out(unsigned int port, unsigned char byte)
       switch (byte)
       {
         case FDCO_READ:
-        status=(read(disks[drive]->fd,&ram[dma],size)==size ? FDCX_OK : FDCX_READFAIL);
+        status=(read(disks[drive]->fd,pagetable[((dma)&0xffff)>>12]+((dma)&0x0fff),size)==size ? FDCX_OK : FDCX_READFAIL);
         benice=0;
         break;
         case FDCO_WRITE:
-        status=(write(disks[drive]->fd,&ram[dma],size)==size ? FDCX_OK : FDCX_WRITEFAIL);
+        status=(write(disks[drive]->fd,pagetable[((dma)&0xffff)>>12]+((dma)&0x0fff),size)==size ? FDCX_OK : FDCX_WRITEFAIL);
         benice=0;
         break;
         default:
@@ -678,6 +689,19 @@ void out(unsigned int port, unsigned char byte)
     /*}}}*/
     /* DMAH */ /*{{{*/
     case DMAH: dma=(dma&0xff)|(((unsigned int)byte)<<8); break;
+    /*}}}*/
+    /* PAGEL */ /*{{{*/
+    case PAGEL: page=(page&0xff00)|byte; break;
+    /*}}}*/
+    /* PAGEH */ /*{{{*/
+    case PAGEH: page=(page&0xff)|(((unsigned int)byte)<<8); break;
+    /*}}}*/
+    /* FRAME */ /*{{{*/
+    /* The page table is updated by first setting the page number port
+       and then writing the frame to the frame port which should be
+       mapped to the previously given page.
+     */
+    case FRAME: if ((page<<2)<MEMSIZE) pagetable[((unsigned int)byte)]=&ram[page<<12]; break;
     /*}}}*/
     /* CLKC */ /*{{{*/
     case CLKC: clkcmd=byte; break;

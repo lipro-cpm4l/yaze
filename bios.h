@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 
+/* 	$Id: bios.h,v 1.2 2004/01/11 16:11:17 fdc Exp $	 */
 
 /* TTY management */
 extern struct termios cookedtio, rawtio;
@@ -64,6 +65,7 @@ extern struct sio {
     char *filename;
     char *streamname;
     char tty;
+    char canselect;	/* gr */
     const char strtype;
 } siotab[];
 
@@ -116,6 +118,7 @@ extern struct mnt {		/* mount table (simulated drives A..P) */
 #define COVER(x,y)	(((x)-1)/(y)+1)
 
 void clearfc(struct mnt *dp);
+int isafifo(int desc); /* gr */
 
 #ifdef DEBUG
 void sighand(int sig);

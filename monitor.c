@@ -17,9 +17,19 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 
+/* 	$Id: monitor.c,v 1.3 2004/01/11 16:49:58 fdc Exp $	 */
+
+#ifndef lint
+static char vcid[] = "$Id: monitor.c,v 1.3 2004/01/11 16:49:58 fdc Exp $";
+#endif /* lint */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <time.h>
+#ifndef CLK_TCK
+#define CLK_TCK CLOCKS_PER_SEC
+#endif
 #include <limits.h>
 #include <fcntl.h>
 #include <termios.h>
@@ -602,6 +612,7 @@ doattach(char *cmd)
 	    s->filename = newstr(tok);
 	    s->fp = fdopen(fd, mode);
 	    s->tty = isatty(fd);
+	    s->canselect = s->tty || isafifo(fd);	/* gr */
 	}
     }
     else for (i = 0; i < MAXPSTR; i++) {
@@ -1062,13 +1073,14 @@ docmd(char *cmd)
     for (tlen = strlen(tok), cp = commands; cp->name; cp++)
 	if (strncmp(tok, cp->name, tlen) == 0)
 	    /* don't allow quit command to be abbreviated */
-	    if (cp->func != doquit || strcmp(tok, cp->name) == 0)
+	    if (cp->func != doquit || strcmp(tok, cp->name) == 0) {
 		if (func == NULL)
 		    func = cp->func;
 		else {
 		    func = NULL;	/* ambiguous */
 		    break;
 		}
+	    }
     if (func)
 	return func(cmd);
     printf("%s ?\n", tok);
@@ -1114,13 +1126,14 @@ monitor(FASTWORK adr)
     do {
 	fputs("$>", stdout);
 	fflush(stdout);
-	if (fgets(cmd, BUFSIZ-1, stdin) == NULL)
+	if (fgets(cmd, BUFSIZ-1, stdin) == NULL) {
 	    if ((ttyflags & ISATTY) == 0)
 		doquit(NULL);
 	    else {
 		putchar('\n');
 		cmd[0] = 0;
 	    }
+	}
     } while (!docmd(cmd));
 #endif
     ttyraw();

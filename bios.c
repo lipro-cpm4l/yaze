@@ -35,6 +35,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 #include "yaze.h"
 #include "bios.h"
 
+/* 	$Id: bios.c,v 1.3 2004/01/11 16:49:58 fdc Exp $	 */
+
+#ifndef lint
+static char vcid[] = "$Id: bios.c,v 1.3 2004/01/11 16:49:58 fdc Exp $";
+#endif /* lint */
+
+
 /* Z80 registers */
 #define AF	af[af_sel]
 #define BC	regs[regs_sel].bc
@@ -108,6 +115,14 @@ getsiop(int chan)
     return &siotab[chn[chan]];
 }
 
+/* gr: */
+int isafifo(int desc)
+{
+    struct stat buf;
+    
+    return fstat(desc, &buf) == 0 && S_ISFIFO(buf.st_mode);
+}
+
 int
 bios_init(const char *initfile)
 {
@@ -133,10 +148,14 @@ bios_init(const char *initfile)
     name = ttyname(fileno(stdin));
     siotab[CRTin].filename = name ? newstr(name) : "(stdin)";
     siotab[CRTin].tty = isatty(fileno(stdin));
+    /* gr: */
+    siotab[CRTin].canselect = siotab[CRTin].tty || isafifo(fileno(stdin));
     siotab[CRTout].fp = stdout;
     name = ttyname(fileno(stdout));
     siotab[CRTout].filename = name ? newstr(name) : "(stdout)";
     siotab[CRTout].tty = isatty(fileno(stdout));
+    /* gr: */
+    siotab[CRTout].canselect = siotab[CRTout].tty || isafifo(fileno(stdout));
     if (siotab[CRTin].tty) {
 	ttyflags = ISATTY;
 	if (tcgetattr(fileno(stdin), &cookedtio) != 0) {
@@ -201,9 +220,9 @@ constat(void)
     struct sio *s = getsiop(CHNconin);
     int fd;
 
-    if (s->fp == NULL)			/* no file */
+    if (s->fp == NULL)		/* no file */
 	return 0;
-    if (s->tty == 0)			/* disk files are always ready */
+    if (s->canselect == 0)	/* disk files are not always ready! (gr) */
 	return 1;
     if (bioscount != lastcount+1)
 	consecutive = 0;
@@ -258,11 +277,12 @@ serin(int chan)
 
     if (s->fp == NULL)
 	return 0x1a;
-    if (s->tty)
+    if (s->tty) {
 	if (read(fileno(s->fp), &c, 1) == 0)
 	    return 0x1a;
 	else
 	    return c;
+    }
     if ((ch = getc(s->fp)) == EOF)
 	return 0x1a;
     else
@@ -406,7 +426,7 @@ readsec(void)
 	    /* sort least-recently-used to front */
 	    struct fc temp;
 	    temp = fcache[i];
-	    memmove(fcache+i, fcache, i * sizeof(struct fc));
+	    memmove(fcache+1, fcache, i * sizeof(struct fc));
 	    fcache[0] = temp;
 	}
 	if (fseek(fcache[0].f, offset-fcache[0].fd->firstblock*BLOCK_SIZE,

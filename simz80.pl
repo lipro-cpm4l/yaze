@@ -20,6 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 
 EOT
 
+# 	$Id: simz80.pl,v 1.2 2004/01/11 16:11:17 fdc Exp $
+
 
 # This perl script generates the z80 instruction set simulator simz80().
 
@@ -826,7 +828,7 @@ EOT
 sub OUTP {
     local($reg,$which) = @_;
     print <<"EOT";
-$tab	Output(lreg(BC), $reg);
+$tab	Output(lreg(BC), ${which}reg($reg));
 EOT
 }
 

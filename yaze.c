@@ -22,14 +22,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 #include "simz80.h"
 #include "yaze.h"
 
-/* 	$Id: yaze.c,v 1.3 2004/01/24 22:18:52 fdc Exp $	 */
+/* 	$Id: yaze.c,v 1.5 2004/04/23 10:05:25 fdc Exp $	 */
 
 #ifndef lint
-static char vcid[] = "$Id: yaze.c,v 1.3 2004/01/24 22:18:52 fdc Exp $";
+static char vcid[] = "$Id: yaze.c,v 1.5 2004/04/23 10:05:25 fdc Exp $";
 #endif /* lint */
 
 
-#define VERSION	"1.13"
+#define VERSION	"1.14"
 
 /* Z80 registers */
 WORD af[2];			/* accumulator and flags (2 banks) */
@@ -44,6 +44,7 @@ WORD iy;
 WORD sp;
 WORD pc;
 WORD IFF;
+WORD IM;
 
 BYTE ram[MEMSIZE*1024];		/* Z80 memory space */
 #ifdef MMU

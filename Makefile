@@ -1,8 +1,8 @@
 # Makefile for yaze
 
-#	$Id: Makefile,v 1.4 2004/01/24 22:18:52 fdc Exp $	
+#	$Id: Makefile,v 1.5 2004/04/23 10:05:25 fdc Exp $	
 
-VERSION		= 1.13
+VERSION		= 1.14
 
 # CC must be an ANSI-C compiler
 CC            =	gcc

@@ -1,3 +1,14 @@
+**** Version 1.14 released ****
+
+2004-04-23  Frank D. Cringle  <fdc@sabre.ping.de>
+
+	* yaze.c, Makefile (VERSION): update version string.
+
+	* simz80.pl: simulate the interrupt register (IR).  (Michael Haardt).
+
+	* bios.c (bios): case 254 incremented pc twice in a macro argument
+	(Carl Mascott).
+
 **** Version 1.13 released ****
 
 2004-01-24  Frank D. Cringle  <fdc@cliwe.ping.de>

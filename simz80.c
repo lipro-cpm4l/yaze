@@ -1947,7 +1947,7 @@ simz80(FASTREG PC)
 			POP(PC);
 			break;
 		case 0x46:			/* IM 0 */
-			/* interrupt mode 0 */
+			IM = 0;
 			break;
 		case 0x47:			/* LD I,A */
 			ir = (ir & 255) | (AF & ~255);
@@ -2012,7 +2012,7 @@ simz80(FASTREG PC)
 			PC += 2;
 			break;
 		case 0x56:			/* IM 1 */
-			/* interrupt mode 1 */
+			IM = 1;
 			break;
 		case 0x57:			/* LD A,I */
 			AF = (AF & 0x29) | (ir & ~255) | ((ir >> 8) & 0x80) | (((ir & ~255) == 0) << 6) | ((IFF & 2) << 1);
@@ -2044,7 +2044,7 @@ simz80(FASTREG PC)
 			PC += 2;
 			break;
 		case 0x5E:			/* IM 2 */
-			/* interrupt mode 2 */
+			IM = 2;
 			break;
 		case 0x5F:			/* LD A,R */
 			AF = (AF & 0x29) | ((ir & 255) << 8) | (ir & 0x80) | (((ir & 255) == 0) << 6) | ((IFF & 2) << 1);

@@ -1,0 +1,40 @@
+1998-01-27  Frank D. Cringle  <fdc@cliwe.ping.de>
+
+	* simz80.pl: set the flags correctly for LD A,I/R and
+	CPI/CPIR/CPD/CPDR (reported by Sean Young).
+
+	* monitor.c (mountdir): fix fencepost error when setting cp[15],
+	as reported by Richard Hirst.
+
+1998-01-25  Frank D. Cringle  <fdc@cliwe.ping.de>
+
+	* simz80.pl: change direct and indirect references to the RAM()
+	macro, because it now evaluates its operand more than once if MMU
+	is in use (contributed by Michael Haardt).
+
+	* yaze.c, simz80.h: Make BIOS optional and add MMU initialisation
+	(contributed by Michael Haardt).
+
+Sun Apr 28 11:30:52 1996  Frank D. Cringle  <fdc@cliwe.ping.de>
+
+	* cdm.c (getblock): rename index to idx (avoids a warning about
+	shadowing index()).
+	(main): correct a type in the !USE_GNU_READLINE case.
+
+Thu Apr 25 15:32:24 1996  Frank D. Cringle  <fdc@cliwe.ping.de>
+
+	* bios.c (constat, lststat): select() may modify timeval, so
+	reinitialise it.
+	(readsec,writesec): protect against undefined or unmounted disk.
+	(bios): Add BgiiFix.
+
+	* monitor.c (mount): use MAP_FILE flag in mmap() call (linux-ism?).
+
+	* yaze.c (load_cpm): correctly calculate available memory if
+	loadadr is specified.
+
+	* simz80.pl (CALLC): rename symbol adr to avoid warning msg.
+
+	* cdm.c (srchdir): ignore cpm-3 byte count.
+
+

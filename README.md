@@ -1,4 +1,5 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/n3oru805vmgp2x8f/branch/master?svg=true)](https://ci.appveyor.com/project/rexut/yaze/branch/master)
+[![Build Status](https://travis-ci.org/lipro-cpm4l/yaze.svg?branch=master)](https://travis-ci.org/lipro-cpm4l/yaze)
 
 yaze - Yet Another Z80 Emulator
 ===============================

@@ -1,0 +1,31 @@
+version: '{build}'
+os: Windows Server 2012
+
+environment:
+  GNUMAKE: make
+  COMPILER: gcc
+  matrix:
+  - SYSROOT_HOME: C:\cygwin
+  - SYSROOT_HOME: C:\cygwin64
+
+install:
+  - cmd: SET PATH=%SYSROOT_HOME%\bin;%PATH%
+  - cmd: CMD /C %GNUMAKE% --version
+  - cmd: CMD /C %COMPILER% --version -v
+
+init:
+  - git config --global core.autocrlf input
+
+build_script:
+  - cmd: CMD /C %GNUMAKE% all
+
+test: false
+
+artifacts:
+  - path: .yazerc
+  - path: yaze.exe
+  - path: yaze.boot
+  - path: yaze.doc
+  - path: yaze.1
+  - path: cdm.exe
+  - path: cdm.1

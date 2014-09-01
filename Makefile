@@ -95,7 +95,7 @@ tar:		$(DISTRIB)
 		gzip -9 yaze-$(VERSION).tar; \
 		rm -rf yaze-$(VERSION))
 
-clean:;		rm -f *.o *~ core
+clean:;		rm -f *.o *~ core yaze cdm
 
 yaze.o:		yaze.c simz80.h yaze.h
 bios.o:		bios.c simz80.h yaze.h

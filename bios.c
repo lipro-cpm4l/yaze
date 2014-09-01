@@ -278,10 +278,11 @@ serin(int chan)
     if (s->fp == NULL)
 	return 0x1a;
     if (s->tty) {
-	if (read(fileno(s->fp), &c, 1) == 0)
+	if (read(fileno(s->fp), &c, 1) == 0) {
 	    return 0x1a;
-	else
+	} else {
 	    return c;
+	}
     }
     if ((ch = getc(s->fp)) == EOF)
 	return 0x1a;

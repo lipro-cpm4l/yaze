@@ -1670,9 +1670,9 @@ docmd(char *cmd)
 	if (!diskuser(cmd, &d, &u))
 	    goto bad;
 	if (d >= 0) {
-	    if (mnttab[d].flags & MNT_ACTIVE)
+	    if (mnttab[d].flags & MNT_ACTIVE) {
 		curdisk = d;
-	    else {
+	    } else {
 		fprintf(stderr, "disk %c not mounted\n", 'A'+d);
 		return 0;
 	    }
@@ -1689,13 +1689,15 @@ docmd(char *cmd)
     tok = strtok(cmd, white);
     if (tok == NULL || *tok == 0)
 	return 0;
-    for (tlen = strlen(tok), cp = commands; cp->name; cp++)
+    for (tlen = strlen(tok), cp = commands; cp->name; cp++) {
 	if (strncmp(tok, cp->name, tlen) == 0) {
-	    if (func)
+	    if (func) {
 		goto bad;		/* ambiguous */
-	    else
+	    } else {
 		func = cp->func;
+	    }
 	}
+    }
     if (func)
 	return func(tok);
  bad:

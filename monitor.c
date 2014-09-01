@@ -1066,17 +1066,19 @@ docmd(char *cmd)
     tok = strtok(cmd, white);
     if (tok == NULL || *tok == 0)
 	return 0;
-    for (tlen = strlen(tok), cp = commands; cp->name; cp++)
-	if (strncmp(tok, cp->name, tlen) == 0)
+    for (tlen = strlen(tok), cp = commands; cp->name; cp++) {
+	if (strncmp(tok, cp->name, tlen) == 0) {
 	    /* don't allow quit command to be abbreviated */
 	    if (cp->func != doquit || strcmp(tok, cp->name) == 0) {
-		if (func == NULL)
+		if (func == NULL) {
 		    func = cp->func;
-		else {
+		} else {
 		    func = NULL;	/* ambiguous */
 		    break;
 		}
 	    }
+	}
+    }
     if (func)
 	return func(cmd);
     printf("%s ?\n", tok);
@@ -1110,11 +1112,13 @@ monitor(FASTWORK adr)
 	    cmd = NULL;
 	}
 	cmd = readline("$>");
-	if (cmd == NULL)
-	    if ((ttyflags & ISATTY) == 0)
+	if (cmd == NULL) {
+	    if ((ttyflags & ISATTY) == 0) {
 		doquit(NULL);
-	    else
+	    } else {
 		putchar('\n');
+	    }
+	}
     } while (!docmd(cmd));
 #else
     if (cmd == NULL)
@@ -1123,9 +1127,9 @@ monitor(FASTWORK adr)
 	fputs("$>", stdout);
 	fflush(stdout);
 	if (fgets(cmd, BUFSIZ-1, stdin) == NULL) {
-	    if ((ttyflags & ISATTY) == 0)
+	    if ((ttyflags & ISATTY) == 0) {
 		doquit(NULL);
-	    else {
+	    } else {
 		putchar('\n');
 		cmd[0] = 0;
 	    }

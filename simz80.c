@@ -106,7 +106,7 @@ static void
 cb_prefix(FASTREG adr)
 {
     DECLARE_STATE();
-    FASTWORK temp, acu, op, cbits;
+    FASTWORK temp = 0, acu = 0, op, cbits;
 
 		switch ((op = GetBYTE(PC)) & 7) {
 		case 0: ++PC; acu = hreg(BC); break;
@@ -673,8 +673,8 @@ simz80(FASTREG PC)
     FASTREG DE = regs[regs_sel].de;
     FASTREG HL = regs[regs_sel].hl;
     FASTREG SP = sp;
-    FASTWORK temp, acu, sum, cbits;
-    FASTWORK op, adr;
+    FASTWORK temp = 0, acu = 0, sum, cbits;
+    FASTWORK op/*, adr*/;
 
 #ifdef DEBUG
     while (!stopsim) {

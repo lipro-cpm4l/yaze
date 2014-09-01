@@ -1411,7 +1411,7 @@ static void
 cb_prefix(FASTREG adr)
 {
     DECLARE_STATE();
-    FASTWORK temp, acu, op, cbits;
+    FASTWORK temp = 0, acu = 0, op, cbits;
 
 EOT
 	&cb_switch;
@@ -1489,8 +1489,8 @@ EOT
     FASTREG IY = iy;
 EOT
     }
-    print "    FASTWORK temp, acu, sum, cbits;\n";
-    print "    FASTWORK op, adr;\n" if ($cb_inline + $dfd_inline +
+    print "    FASTWORK temp = 0, acu = 0, sum, cbits;\n";
+    print "    FASTWORK op/*, adr*/;\n" if ($cb_inline + $dfd_inline +
 				  $ed_inline != 0);
 
     if ($optab) {

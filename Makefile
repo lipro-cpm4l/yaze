@@ -23,8 +23,8 @@ OPTIMIZE       = -g -O2
 # -DMMU compiles in support for bank-switched memory
 # -DMEMSIZE <val> sets size of memory in KBytes (default 64)
 # solaris2 needs -D__EXTENSIONS__
-# linux needs -D_BSD_SOURCE
-OPTIONS	      = -DBIOS -D_BSD_SOURCE
+# linux needs -D_GNU_SOURCE
+OPTIONS	      = -DBIOS -D_GNU_SOURCE
 
 # Link with CP/M BIOS support,
 YAZE_OBJS     = yaze.o simz80.o bios.o monitor.o

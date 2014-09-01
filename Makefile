@@ -24,7 +24,7 @@ OPTIMIZE       = -g -O2
 # -DMEMSIZE <val> sets size of memory in KBytes (default 64)
 # solaris2 needs -D__EXTENSIONS__
 # linux needs -D_GNU_SOURCE
-OPTIONS	      = -DBIOS -DMEMSIZE=64 -D_GNU_SOURCE
+OPTIONS	      = -DBIOS -DMEMSIZE=64 -DUSE_GNU_READLINE -D_GNU_SOURCE
 
 # Link with CP/M BIOS support,
 YAZE_OBJS     = yaze.o simz80.o bios.o monitor.o
@@ -33,7 +33,8 @@ YAZE_OBJS     = yaze.o simz80.o bios.o monitor.o
 
 # -lreadline -lcurses -liberty if you defined USE_GNU_READLINE
 #  (you don't need -liberty on linux or BSD systems)
-LIBS	      =
+#  (you don't need -lncurses on new linux or BSD systems)
+LIBS	      = -lreadline
 
 # a bsd-like install program (/usr/ucb/install on Solaris2)
 INSTALL	      = install

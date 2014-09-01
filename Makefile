@@ -24,7 +24,7 @@ OPTIMIZE       = -g -O2
 # -DMEMSIZE <val> sets size of memory in KBytes (default 64)
 # solaris2 needs -D__EXTENSIONS__
 # linux needs -D_GNU_SOURCE
-OPTIONS	      = -DBIOS -D_GNU_SOURCE
+OPTIONS	      = -DBIOS -DMEMSIZE=64 -D_GNU_SOURCE
 
 # Link with CP/M BIOS support,
 YAZE_OBJS     = yaze.o simz80.o bios.o monitor.o

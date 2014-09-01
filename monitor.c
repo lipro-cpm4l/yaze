@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 /* 	$Id: monitor.c,v 1.3 2004/01/11 16:49:58 fdc Exp $	 */
 
 #ifndef lint
-static char vcid[] = "$Id: monitor.c,v 1.3 2004/01/11 16:49:58 fdc Exp $";
+static char vcid[] __attribute__((unused)) = "$Id: monitor.c,v 1.3 2004/01/11 16:49:58 fdc Exp $";
 #endif /* lint */
 
 #include <stdio.h>

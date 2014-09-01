@@ -36,7 +36,7 @@ simulator, if it still reads characters.
 /* 	$Id: io.c,v 1.2 2004/01/11 16:11:17 fdc Exp $	 */
 
 #ifndef lint
-static char vcid[] = "$Id: io.c,v 1.2 2004/01/11 16:11:17 fdc Exp $";
+static char vcid[] __attribute__((unused)) = "$Id: io.c,v 1.2 2004/01/11 16:11:17 fdc Exp $";
 #endif /* lint */
 
 /*}}}*/

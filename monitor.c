@@ -27,9 +27,6 @@ static char vcid[] __attribute__((unused)) = "$Id: monitor.c,v 1.3 2004/01/11 16
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
-#ifndef CLK_TCK
-#define CLK_TCK CLOCKS_PER_SEC
-#endif
 #include <limits.h>
 #include <fcntl.h>
 #include <termios.h>
@@ -915,7 +912,7 @@ dotime(char *cmd)
     clock_t now;
     static struct tms lastbuf;
     struct tms tbuf;
-    long tickspersec = CLK_TCK;
+    long tickspersec = CLOCKS_PER_SEC;
 
     now = times(&tbuf);
 

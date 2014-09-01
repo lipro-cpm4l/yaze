@@ -1,4 +1,4 @@
-#!/usr/bin/tcl
+#!/usr/bin/tclsh
 
 # copies host directories to/from a cpm disk image file
 # Note a single file can be

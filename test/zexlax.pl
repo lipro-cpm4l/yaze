@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/usr/bin/perl
 
 # This perl code generates either the full-flag or documented-flag
 # version of the Z80 instruction exerciser, and also randomises the

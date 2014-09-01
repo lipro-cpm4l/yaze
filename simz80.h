@@ -49,6 +49,9 @@ typedef unsigned int	FASTWORK;
 typedef unsigned long	FASTWORK;
 #endif
 
+/* accessible by the monitor */
+extern char *perl_params;
+
 /* two sets of accumulator / flags */
 extern WORD af[2];
 extern int af_sel;

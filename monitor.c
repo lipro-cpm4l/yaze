@@ -916,7 +916,6 @@ dotime(char *cmd)
     static struct tms lastbuf;
     struct tms tbuf;
     long tickspersec = CLK_TCK;
-    extern char *perl_params;
 
     now = times(&tbuf);
 
@@ -924,7 +923,7 @@ dotime(char *cmd)
 	   ((double)(now-lastreal))/tickspersec,
 	   ((double)(tbuf.tms_utime-lastbuf.tms_utime))/tickspersec,
 	   ((double)(tbuf.tms_stime-lastbuf.tms_stime))/tickspersec,
-	   perl_params);
+	   perl_params /* from simz80 */);
     lastreal = now;
     lastbuf = tbuf;
     return 0;

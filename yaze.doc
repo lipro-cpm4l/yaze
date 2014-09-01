@@ -233,7 +233,7 @@ extensions.
 
 'make install' puts the binaries in BINDIR (default: /usr/local/bin),
 the manual pages in MANDIR (default: /usr/local/man/man1) and the
-bootstrap file in LIBDIR (default: /usr/local/lib).
+bootstrap file in LIBDIR (default: /usr/local/share/yaze).
 
 
 3.  Command-line options

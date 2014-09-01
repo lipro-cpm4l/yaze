@@ -10,7 +10,7 @@ CC            =	gcc
 #where you want the binaries and manual page
 BINDIR	      = /usr/local/bin
 MANDIR	      = /usr/local/man/man1
-LIBDIR	      = /usr/local/lib
+LIBDIR	      = /usr/local/share/yaze
 
 # full speed or debugging to taste
 #OPTIMIZE      = -O2

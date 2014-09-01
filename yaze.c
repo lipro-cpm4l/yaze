@@ -52,7 +52,7 @@ BYTE *pagetable[16];		/* MMU page table */
 #endif
 
 #ifndef LIBDIR
-#define LIBDIR "/usr/local/lib/"
+#define LIBDIR "/usr/local/share/yaze/"
 #endif
 
 static char *bootfile = "yaze.boot";

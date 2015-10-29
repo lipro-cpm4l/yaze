@@ -13,8 +13,8 @@ MANDIR	      = /usr/local/man/man1
 LIBDIR	      = /usr/local/lib
 
 # full speed or debugging to taste
-OPTIMIZE      = -O2
-#OPTIMIZE       = -g
+#OPTIMIZE      = -O2
+OPTIMIZE       = -g -O2
 
 # -DUSE_GNU_READLINE for command recall/editing and filename completion
 # -DBGii_BUG works around a problem in Backgrounder II
@@ -69,8 +69,8 @@ cdm:		cdm.o
 		$(CC) $(CFLAGS) cdm.o $(LIBS) -o $@
 
 install:	all
-		$(INSTALL) -s -c -m 755 yaze $(BINDIR)
-		$(INSTALL) -s -c -m 755 cdm $(BINDIR)
+		$(INSTALL) -c -m 755 yaze $(BINDIR)
+		$(INSTALL) -c -m 755 cdm $(BINDIR)
 		$(INSTALL) -c -m 644 yaze.boot $(LIBDIR)
 		$(INSTALL) -c -m 644 yaze.1 $(MANDIR)
 		$(INSTALL) -c -m 644 cdm.1 $(MANDIR)

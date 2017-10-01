@@ -11,6 +11,7 @@ CC            =	gcc
 BINDIR	      = /usr/local/bin
 MANDIR	      = /usr/local/man/man1
 LIBDIR	      = /usr/local/share/yaze
+SYSCONFDIR    = /usr/local/etc
 
 # full speed or debugging to taste
 #OPTIMIZE      = -O2
@@ -43,7 +44,8 @@ INSTALL	      = install
 ###### you should not need to change anything below this line ######
 CWARN	      = -ansi -pedantic -Wall -Wshadow \
 		-Wpointer-arith -Wnested-externs -Winline
-CFLAGS        =	$(CWARN) $(OPTIMIZE) $(OPTIONS) -DLIBDIR=\"$(LIBDIR)/\"
+CFLAGS        =	$(CWARN) $(OPTIMIZE) $(OPTIONS) -DLIBDIR=\"$(LIBDIR)/\" \
+                -DSYSCONFDIR=\"$(SYSCONFDIR)\"
 
 SRCS	      = yaze.c simz80.c io.c bios.c monitor.c cdm.c
 DOC	      = README README-1.10 COPYING yaze.doc yaze.1 cdm.1 ChangeLog

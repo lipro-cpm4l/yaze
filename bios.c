@@ -42,6 +42,10 @@ static char vcid[] __attribute__((unused)) = "$Id: bios.c,v 1.4 2004/04/23 09:50
 #endif /* lint */
 
 
+#ifndef SYSCONFDIR
+#define SYSCONFDIR "/usr/local/etc"
+#endif
+
 /* Z80 registers */
 #define AF	af[af_sel]
 #define BC	regs[regs_sel].bc
@@ -175,6 +179,10 @@ bios_init(const char *initfile)
 	if (h) {
 	    fn = buf;
 	    sprintf((char *) fn, "%s/%s", h, initfile);
+	}
+	if (access(fn, R_OK) != 0) {
+	    fn = buf;
+	    sprintf((char *) fn, "%s/%s", SYSCONFDIR, "yazerc");
 	}
     }
     if ((su = fopen(fn, "r")) == NULL)

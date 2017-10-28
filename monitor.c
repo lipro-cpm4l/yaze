@@ -935,6 +935,8 @@ dogo(char *cmd)
 static int
 doshell(char *cmd)
 {
+    /* there is no handling of shell execution errors */
+    int unused __attribute__((unused));
     char *shell = getenv("SHELL");
 #ifdef DEBUG
     void (*sigint)(int);
@@ -944,9 +946,9 @@ doshell(char *cmd)
     if (shell == NULL)
 	shell = "/bin/sh";
     if (cmd[1])
-	system(cmd+1);
+	unused = system(cmd+1);
     else
-	system(shell);
+	unused = system(shell);
 #ifdef DEBUG
     (void) signal(SIGINT, sigint);
 #endif

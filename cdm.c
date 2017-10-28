@@ -1541,6 +1541,8 @@ dorename(char *tok)
 static int
 doshell(char *cmd)
 {
+    /* there is no handling of shell execution errors */
+    int unused __attribute__((unused));
     void (*sigint)(int);
     char *shell = getenv("SHELL");
 
@@ -1548,9 +1550,9 @@ doshell(char *cmd)
 	shell = "/bin/sh";
     sigint = signal(SIGINT, SIG_IGN);
     if (cmd[1])
-	system(cmd+1);
+	unused = system(cmd+1);
     else
-	system(shell);
+	unused = system(shell);
     (void) signal(SIGINT, sigint);
     return 0;
 }

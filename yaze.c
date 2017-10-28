@@ -112,6 +112,7 @@ static void
 load_cpm(const char *bfname)
 {
     FILE *cpm;
+    size_t readsz;
 #ifdef BIOS
     int i, skip = 0;
     WORD offs;
@@ -132,8 +133,12 @@ load_cpm(const char *bfname)
 	exit(1);
     }
     if (loadadr >= 0) {
-	fread(ram+loadadr, 1, 64*1024-loadadr, cpm);
+	readsz = fread(ram + loadadr, 1, 64*1024-loadadr, cpm);
 	fclose(cpm);
+	if (readsz == 0) {
+	    fprintf(stderr, "%s is empty\n", bfname);
+	    exit(1);
+	}
 	pc = loadadr;
 #ifdef BIOS
 	regs[regs_sel].hl = ccp_base;
@@ -150,7 +155,11 @@ load_cpm(const char *bfname)
 	skip = 0x880;
 	fseek(cpm, skip, SEEK_SET);
     }
-    fread(ram + ccp_base, CPM_LENGTH, 1, cpm);
+    readsz = fread(ram + ccp_base, CPM_LENGTH, 1, cpm);
+    if (readsz == 0) {
+	fprintf(stderr, "%s has insufficient size or is empty\n", bfname);
+	exit(1);
+    }
     if (sb.st_size < 2*CPM_LENGTH) {
 	/* single, non-relocatable copy */
 	if (ram[ccp_base] == 0xc3 && (ram[ccp_base+2]&0xfc) != basepage)

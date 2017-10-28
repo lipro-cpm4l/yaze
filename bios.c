@@ -302,13 +302,14 @@ static void
 serout(int chan, char c)
 {
     struct sio *s = getsiop(chan);
+    unsigned int unused __attribute__((unused));
 
     if (s->fp == NULL)
 	return;
     if (s->tty)
-	(void) write(fileno(s->fp), &c, 1);
+	unused = write(fileno(s->fp), &c, 1);
     else
-	fwrite(&c, 1, 1, s->fp);
+	unused = fwrite(&c, 1, 1, s->fp);
 }
 
 static WORD

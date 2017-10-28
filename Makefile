@@ -103,3 +103,6 @@ clean:;		rm -f *.o *~ core yaze cdm
 yaze.o:		yaze.c simz80.h yaze.h
 bios.o:		bios.c simz80.h yaze.h
 simz80.o:	simz80.c simz80.h
+
+.PHONY: .FORCE all clean install tar
+.FORCE:

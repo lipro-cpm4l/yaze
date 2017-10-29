@@ -44,7 +44,7 @@ INSTALL	      = install
 ###### you should not need to change anything below this line ######
 CWARN	      = -ansi -pedantic -Wall -Wshadow \
 		-Wpointer-arith -Wnested-externs -Winline
-CFLAGS        =	$(CWARN) $(OPTIMIZE) $(OPTIONS) -DLIBDIR=\"$(LIBDIR)/\" \
+CFLAGS       += $(CWARN) $(OPTIMIZE) $(OPTIONS) -DLIBDIR=\"$(LIBDIR)/\" \
                 -DSYSCONFDIR=\"$(SYSCONFDIR)\"
 
 SRCS	      = yaze.c simz80.c io.c bios.c monitor.c cdm.c
@@ -61,7 +61,7 @@ DISTRIB       =	Makefile simz80.h yaze.h bios.h simz80.pl .yazerc yaze.boot \
 all:		yaze cdm
 
 yaze:		$(YAZE_OBJS)
-		$(CC) $(CFLAGS) $(YAZE_OBJS) $(LIBS) -o $@
+		$(CC) $(CFLAGS) $(LDFLAGS) $(YAZE_OBJS) $(LIBS) -o $@
 
 simz80.c:	simz80.pl
 		rm -f simz80.c
@@ -69,7 +69,7 @@ simz80.c:	simz80.pl
 		chmod a-w simz80.c
 
 cdm:		cdm.o
-		$(CC) $(CFLAGS) cdm.o $(LIBS) -o $@
+		$(CC) $(CFLAGS) $(LDFLAGS) cdm.o $(LIBS) -o $@
 
 install:	all
 		$(INSTALL) -c -m 755 yaze $(BINDIR)

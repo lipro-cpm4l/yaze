@@ -274,3 +274,64 @@ distributed under the GNU General Public License version 2.
 *Primary-site*: ftp://ftp.ping.de/pub/misc/emulators/
 
 **Various trademarks are the property of various organisations.**
+
+## License terms and liability
+
+The author provides the software in accordance with the terms of
+the GNU-GPL. The use of the software is free of charge and is
+therefore only at your own risk! **No warranty or liability!**
+
+**Any guarantee and liability is excluded!**
+
+### Program parts excluded and exempted from the GNU-GPL
+
+The CP/M disk images for the emulated Z80 system is required to
+operate Yaze. You can find this in the file [yaze.boot](yaze.boot).
+
+## Authorship
+
+*Primary-site*: ftp://ftp.ping.de/pub/misc/emulators/
+
+### Source code
+
+**Frank D. Cringle is the originator of the C source code and
+Z80 instructions test programms provided as assembler mnemonic**
+as well as the associated scripts, descriptions and help files.
+This part is released and distributed under the GNU General
+Public License (GNU-GPL) Version 2.
+
+**A few parts of the source code are based on the work of other
+authors:**
+
+> - **Michael Haardt**:
+>   He contributed the [io.c](io.c) file and the bank switching
+>   memory logic, which may provide a platform for running MP/M
+>   and UZI on the emulator. Many bug fixes for the Z80
+>   instruction set simulator and prepare to work with CP/M 3.0.
+> - **Carl Mascott**, **Günter Radestock**, **Richard Hirst**:
+>   Bug fixes for the Monitor and BIOS implementation.
+> - **Gary L. Howell**:
+>   Contribute TCL Script that copies host directories to/from
+>   a CP/M disk image.
+
+### CP/M disk content
+
+**The authorship of the CP/M disk content are:**
+
+> - **Jay Sage**, **Don Kirkpatrick**
+>     ([ZCPR-D&J](http://oldcomputers-ddns.org/public/pub/cdrom/walnut_creek_cdrom/demon/zcpr-d-j.com)
+>      of 5 March 1994 as CCP)
+> - **Herman ten Brugge**, **Benjamin Ho**
+>     ([SUPRBDOS](http://oldcomputers-ddns.org/public/pub/cdrom/walnut_creek_cdrom/cpm/bdos/suprdos2.lbr)
+>      as BDOS)
+
+**Additionals about ZCPR source and program code legalization**
+as part of the NZ-COM Z-System and **template for ZCPR-D&J**:
+
+*From Gaby's Homepage for CP/M and Computer History
+["Z-System Download Form"](http://www.gaby.de/edownf.htm)
+(Jan 2020)*:
+Following a common wish of CP/M users, Jay Sage lately declared that
+Z-Systems - NZ-COM (for CP/M 2.2) and Z3PLUS (for CP/M-Plus) - can
+now be downloaded for free. Anyway, he would like to be informed
+about who (and how often) downloads the files.
